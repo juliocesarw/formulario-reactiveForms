@@ -1,0 +1,289 @@
+<main class="bg-green-100 flex flex-row justify-center items-center h-screen w-screen">
+
+    <div class="bg-white w-auto min-w-[36rem] min-h-3/4 h-auto rounded shadow-2xl">
+
+        <section class="flex ">
+            <div>
+                <img class="size-35 flex-none" src="/assets/img/ifes.png" alt="h">
+            </div>
+            <div class=" flex flex-auto justify-center items-center">
+                <h1 class="text-4xl">FICHA DE MATRÍCULA</h1>
+            </div>
+        </section>
+
+        <div class="mx-9">
+            <form [formGroup]="formulario" (ngSubmit)="onSubmit()">
+
+                <div class="flex flex-col mb-5"> <!--campo para o nome completo-->
+                    <label for="nome">Nome Completo*</label>
+                    <input class="border rounded-xl hover:bg-gray-100" type="text" id="nome" name="nome" formControlName="nome"
+                        required>
+                    @if(nome.invalid && nome.touched){
+                    @if(nome.errors?.['required']){<span class="erro">Nome é obrigatório.</span>}
+                    @if(nome.errors?.['minlength']){<span class="erro">Nome deve ter no mínimo 3 caracteres.</span>}
+                    }
+                </div>
+
+                <div class="flex flex-row mb-3"><!-- campo para idade -->
+                    <div class="flex flex-col">
+                        <div class="flex-row">
+                            <label class="mr-2" for="idade">Idade*</label>
+                            <input class="border rounded-xl hover:bg-gray-100  w-10" type="number" name="idade"
+                                id="idade" formControlName="idade" required>
+                        </div>
+
+                        <!-- validação para a idade -->
+                        @if(idade.invalid && idade.touched){
+                        @if(idade.errors?.['required']){
+                        <span class="erro">Informe a idade</span>
+                        }
+                        @if(idade.errors?.['min']){
+                        <span class="erro">O aluno deve ser de maior </span>
+                        }
+                        }
+
+                    </div>
+
+                    <div class="flex flex-col flex-auto ml-5"><!-- campo para email -->
+                        <div class="flex flex-row flex-auto">
+                            <label for="email">Email*</label>
+                            <input class="border rounded-xl hover:bg-gray-100 flex-auto h-[25.5px] " type="text"
+                                id="email" formControlName="email" required>
+                        </div>
+                        @if(email.invalid && email.touched){
+                        @if(email.errors?.['required']){
+                        <span class="erro">O email é obrigatório</span>
+                        }
+                        @if(email.errors?.['email'] || email.errors?.['pattern']){
+                        <span class="erro">O email digitado é invalido</span>
+                        }
+                        }
+                    </div>
+
+                </div>
+
+                <div class="flex flex-col mb-4"><!-- campo para telefones -->
+
+                    <!-- Input dos numeros -->
+                    <label for="telefone">Telefone*</label>
+                    <div class="flex-row">
+                        <input class="border rounded-xl hover:bg-gray-100" type="text" formControlName="novoTelefone"
+                            inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/\D/g, '')">
+
+                        <button class=" ml-3 rounded bg-gray-200 h-[28px] px-4" type="button"
+                            (click)="adicionarNoArray()">Adicionar</button>
+
+                        <button onclick="document.getElementById('modalTelefones').classList.remove('hidden')"
+                            class="ml-3 rounded bg-gray-200 h-[28px] px-4" [disabled]="telefones.invalid">
+                            Ver Telefones
+                        </button>
+
+                    </div>
+
+                    @if(mensagemSucesso){
+                    <p class="text-green-600 font-semibold mt-2">Telefone inserido com sucesso!</p>
+                    }
+
+                    <!-- FOR PARA ITERAR SOBRE OS NUMEROS-->
+
+
+                    <!-- validação dos números -->
+                    @if(telefones.invalid && novoTelefone.touched){
+                    <span class="erro">Deve ser adicionado ao menos um telefone</span>
+                    }
+
+                    <!-- CONFIGURAÇÕES DO MODAL  -->
+
+
+                    <!-- Fundo escuro para tela e o Modal -->
+                    <div id="modalTelefones" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center">
+
+                        <div class="bg-white rounded-2xl shadow-xl min-w-96 w-auto p-6 relative">
+
+                            <!-- Botão de fechar modal -->
+                            <button onclick="document.getElementById('modalTelefones').classList.add('hidden')"
+                                class="absolute top-3 right-3 text-gray-500 hover:text-red-500 text-xl">
+                                ✕
+                            </button>
+
+                            <!-- Conteúdo -->
+                            <div class="flex flex-col items-center justify-center">
+
+                                <div class="mb-2">
+                                    <h1 class="font-bold text-xl">Telefones</h1>
+                                </div>
+
+                                @for (tel of telefones.controls; track $index) {
+                                <div class="flex flex-row mb-1">
+                                    <p class="py-2 px-4 rounded bg-gray-200 w-[188px]">
+                                        {{tel.value}}
+                                    </p>
+                                    <button class="rounded bg-red-500 text-white px-4 hover:bg-red-700 ml-2"
+                                        type="button" (click)="removerTelefone($index)">Remover</button>
+                                </div>
+                                }
+                                <button onclick="document.getElementById('modal').classList.add('hidden')"
+                                    class="bg-green-300 text-white px-4 py-2 rounded-lg hover:bg-green-700 mt-5">
+                                    Confirmar
+                                </button>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="flex flex-row justify-between mb-2"><!--campo para senha e confirmar senha-->
+                    <div class="flex flex-col w-[230px]">
+                        <label for="senha">Senha*</label>
+                        <input class="border rounded-xl hover:bg-gray-100" type="password" formControlName="senha"
+                            required>
+                        @if(senha.invalid && senha.touched){
+                        <span class="erro">Informe uma senha válida</span>
+                        }
+                    </div>
+                    <div class="flex flex-col w-[230px]">
+                        <label for="senha">Confirme sua senha*</label>
+                        <input class="border rounded-xl hover:bg-gray-100" type="password" formControlName="confirmaSenha"
+                            required>
+                        @if(confirmaSenha.invalid && confirmaSenha.touched){
+                        @if(confirmaSenha.errors?.['required']){
+                        <span class="erro">Confirme sua senha</span>
+                        }
+                        @if(confirmaSenha.errors?.['senhaIgual']){
+                        <span class="erro">As senhas devem ser iguais</span>
+                        }
+                        }
+                    </div>
+                </div>
+
+                <div class="flex flex-row justify-between mb-2"><!-- campo para genero e cidade -->
+                    <div class="flex flex-col">
+                        <label for="genero">Genero*</label>
+                        <select class=" w-[230px] border rounded-xl hover:bg-gray-100" name="genero" id="genero"
+                            formControlName="genero" required>
+                            <option value="" disabled selected>selecione</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Feminino">Feminino</option>
+                            <option value="NaoInformado">Prefiro não dizer</option>
+                        </select>
+                        <div class="mx-2">
+                            @if(genero.invalid && genero.touched){
+                            <span class="erro">
+                                esse campo é obrigatório
+                            </span>
+                            }
+                        </div>
+                    </div>
+
+
+                    <div class="flex flex-col">
+                        <label for="cidade">Cidade*</label>
+                        <input class="w-[230px] rounded-xl bg-gray-200 h-[28px] px-4" list="cidades"
+                            placeholder="Digite sua cidade" formControlName="cidade" required />
+                        <datalist id="cidades">
+                            <option value="Colatina">Colatina</option>
+                            <option value="Linhares">Linhares</option>
+                            <option value="Baixo Guandu">Baixo Guandu</option>
+                            <option value="Vitória">Vitória</option>
+                            <option value="Marilandia">Marilândia</option>
+                        </datalist>
+                        <div class="">
+                            @if(cidade.invalid && cidade.touched){
+                            <span class="erro">Informe a sua cidade</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- campo para aceitar os termos -->
+                <div class="flex flex-col mb-3">
+                    <div class="flex flex-row">
+                        <p>Eu aceito os termos*</p>
+                        <input type="checkbox" name="termo" id="termo" formControlName="termos" required>
+                    </div>
+                    @if(termos.invalid && termos.touched){
+                    <span class="erro">Aceite os termos.</span>
+                    }
+                </div>
+
+                <div class=" flex justify-center items-center mb-5">
+                    <button class=" rounded bg-blue-400 hover:bg-blue-500 w-[230px] text-white" type="submit" [disabled]="formulario.invalid">Enviar</button>
+                </div>
+
+            </form>
+        </div>
+
+
+    </div>
+
+    <!-- Modal de envio -->
+    @if(mostrarModalEnvio){
+    <div class="fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">Dados Enviados com Sucesso!</h2>
+                    <button (click)="fecharModalEnvio()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h3 class="font-semibold text-gray-700 mb-2">Nome Completo</h3>
+                            <p class="text-gray-900">{{ formulario.value.nome }}</p>
+                        </div>
+                        
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h3 class="font-semibold text-gray-700 mb-2">Idade</h3>
+                            <p class="text-gray-900">{{ formulario.value.idade }} anos</p>
+                        </div>
+                        
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h3 class="font-semibold text-gray-700 mb-2">Email</h3>
+                            <p class="text-gray-900">{{ formulario.value.email }}</p>
+                        </div>
+                        
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h3 class="font-semibold text-gray-700 mb-2">Gênero</h3>
+                            <p class="text-gray-900">{{ formulario.value.genero }}</p>
+                        </div>
+                        
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h3 class="font-semibold text-gray-700 mb-2">Cidade</h3>
+                            <p class="text-gray-900">{{ formulario.value.cidade }}</p>
+                        </div>
+                        
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h3 class="font-semibold text-gray-700 mb-2">Termos Aceitos</h3>
+                            <p class="text-gray-900">{{ formulario.value.termos ? 'Sim' : 'Não' }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-gray-700 mb-2">Telefones</h3>
+                        @if(telefones.length > 0){
+                        <ul class="list-disc list-inside space-y-1">
+                            @for (tel of telefones.controls; track $index) {
+                            <li class="text-gray-900">{{ tel.value }}</li>
+                            }
+                        </ul>
+                        } @else {
+                        <p class="text-gray-500">Nenhum telefone cadastrado</p>
+                        }
+                    </div>
+                </div>
+                
+                <div class="mt-6 flex justify-end">
+                    <button (click)="fecharModalEnvio()" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-medium">
+                        Fechar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+
+</main>
